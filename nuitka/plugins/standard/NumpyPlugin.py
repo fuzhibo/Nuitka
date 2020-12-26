@@ -243,7 +243,6 @@ Should matplotlib not be be included with numpy, Default is %default.""",
             empty tuple
         """
         full_name = module.getFullName()
-        elements = full_name.split(".")
 
         if not self.numpy_copied and full_name == "numpy":
             self.numpy_copied = True
@@ -285,7 +284,7 @@ Should matplotlib not be be included with numpy, Default is %default.""",
                 )
                 self.info(msg)
 
-        if not self.mpl_data_copied and "matplotlib" in elements:
+        if not self.mpl_data_copied and full_name == "matplotlib":
             self.mpl_data_copied = True
             copyMplDataFiles(module, dist_dir)
             self.info("Copied 'matplotlib/mpl-data'.")
