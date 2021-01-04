@@ -798,7 +798,7 @@ class PythonModuleContext(
         return self.name
 
     def mayRaiseException(self):
-        body = self.module.getBody()
+        body = self.module.subnode_body
 
         return body is not None and body.mayRaiseException(BaseException)
 

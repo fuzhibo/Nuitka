@@ -188,7 +188,7 @@ def getCallableNameDescBody():
     )
 
     if python_version >= 0x390:
-        result.setBody(functions_case)
+        result.setChild("body", functions_case)
 
         return result
 
@@ -286,7 +286,8 @@ def getCallableNameDescBody():
     else:
         normal_cases = ("function", "builtin_function_or_method")
 
-    result.setBody(
+    result.setChild(
+        "body",
         makeStatementsSequenceFromStatement(
             statement=makeStatementConditional(
                 condition=ExpressionBuiltinIsinstance(
@@ -309,7 +310,7 @@ def getCallableNameDescBody():
                 no_branch=no_branch,
                 source_ref=internal_source_ref,
             )
-        )
+        ),
     )
 
     return result
@@ -1072,7 +1073,7 @@ def getFunctionCallHelperStarList():
         ),
     )
 
-    result.setBody(body)
+    result.setChild("body", body)
 
     return result
 
@@ -1141,7 +1142,7 @@ def getFunctionCallHelperKeywordsStarList():
         ),
     )
 
-    result.setBody(body)
+    result.setChild("body", body)
 
     return result
 
@@ -1215,7 +1216,7 @@ def getFunctionCallHelperPosStarList():
         ),
     )
 
-    result.setBody(body)
+    result.setChild("body", body)
 
     return result
 
@@ -1292,7 +1293,7 @@ def getFunctionCallHelperPosKeywordsStarList():
         ),
     )
 
-    result.setBody(body)
+    result.setChild("body", body)
 
     return result
 
@@ -1371,7 +1372,7 @@ def getFunctionCallHelperStarDict():
         ),
     )
 
-    result.setBody(body)
+    result.setChild("body", body)
 
     return result
 
@@ -1455,7 +1456,7 @@ def getFunctionCallHelperPosStarDict():
         ),
     )
 
-    result.setBody(body)
+    result.setChild("body", body)
 
     return result
 
@@ -1563,7 +1564,7 @@ def getFunctionCallHelperKeywordsStarDict():
         ),
     )
 
-    result.setBody(body)
+    result.setChild("body", body)
 
     return result
 
@@ -1675,7 +1676,7 @@ def getFunctionCallHelperPosKeywordsStarDict():
         ),
     )
 
-    result.setBody(body)
+    result.setChild("body", body)
 
     return result
 
@@ -1770,7 +1771,7 @@ def getFunctionCallHelperStarListStarDict():
 
     body = makeStatementsSequenceFromStatements(*statements)
 
-    result.setBody(body)
+    result.setChild("body", body)
 
     return result
 
@@ -1844,7 +1845,7 @@ def getFunctionCallHelperPosStarListStarDict():
 
     body = makeStatementsSequenceFromStatements(*statements)
 
-    result.setBody(body)
+    result.setChild("body", body)
 
     return result
 
@@ -1908,7 +1909,7 @@ def getFunctionCallHelperKeywordsStarListStarDict():
 
     body = makeStatementsSequenceFromStatements(*statements)
 
-    result.setBody(body)
+    result.setChild("body", body)
 
     return result
 
@@ -1986,7 +1987,7 @@ def getFunctionCallHelperPosKeywordsStarListStarDict():
 
     body = makeStatementsSequenceFromStatements(*statements)
 
-    result.setBody(body)
+    result.setChild("body", body)
 
     return result
 
@@ -2154,15 +2155,15 @@ def getFunctionCallHelperDictionaryUnpacking():
         ),
     )
 
-    result.setBody(
-        makeStatementsSequenceFromStatement(
-            makeTryFinallyStatement(
-                provider=result,
-                tried=tried,
-                final=final,
-                source_ref=internal_source_ref,
-            )
+    body = makeStatementsSequenceFromStatement(
+        makeTryFinallyStatement(
+            provider=result,
+            tried=tried,
+            final=final,
+            source_ref=internal_source_ref,
         )
     )
+
+    result.setChild("body", body)
 
     return result

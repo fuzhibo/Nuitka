@@ -1205,7 +1205,8 @@ def buildNamedExprNode(provider, node, source_ref):
         ),
     )
 
-    outline_body.setBody(
+    outline_body.setChild(
+        "body",
         makeStatementsSequenceFromStatement(
             statement=makeTryFinallyStatement(
                 provider=provider,
@@ -1215,7 +1216,7 @@ def buildNamedExprNode(provider, node, source_ref):
                 ),
                 source_ref=source_ref,
             )
-        )
+        ),
     )
 
     return outline_body

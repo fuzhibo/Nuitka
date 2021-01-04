@@ -278,12 +278,7 @@ class ExpressionBuiltinImport(ExpressionChildrenHavingBase):
 
     kind = "EXPRESSION_BUILTIN_IMPORT"
 
-    named_children = ("name", "globals", "locals", "fromlist", "level")
-    getImportName = ExpressionChildrenHavingBase.childGetter("name")
-    getFromList = ExpressionChildrenHavingBase.childGetter("fromlist")
-    getGlobals = ExpressionChildrenHavingBase.childGetter("globals")
-    getLocals = ExpressionChildrenHavingBase.childGetter("locals")
-    getLevel = ExpressionChildrenHavingBase.childGetter("level")
+    named_children = ("import_name", "globals", "locals", "fromlist", "level")
 
     _warned_about = set()
 
@@ -292,7 +287,7 @@ class ExpressionBuiltinImport(ExpressionChildrenHavingBase):
         ExpressionChildrenHavingBase.__init__(
             self,
             values={
-                "name": name,
+                "import_name": name,
                 "globals": globals_arg,
                 "locals": locals_arg,
                 "fromlist": fromlist,
@@ -395,7 +390,7 @@ Not recursing to '%(full_path)s' (%(filename)s), please specify \
         if not parent_module.isCompiledPythonPackage():
             parent_package = parent_package.getPackageName()
 
-        level = self.getLevel()
+        level = self.subnode_level
 
         if level is None:
             level = 0 if parent_module.getFutureSpec().isAbsoluteImport() else -1
@@ -429,7 +424,7 @@ Not recursing to '%(full_path)s' (%(filename)s), please specify \
                     imported_module.getFilename(),
                 )
 
-                import_list = self.getFromList()
+                import_list = self.subnode_fromlist
 
                 if import_list is not None:
                     if import_list.isCompileTimeConstant():
@@ -537,7 +532,7 @@ Not recursing to '%(full_path)s' (%(filename)s), please specify \
             # We stay here.
             return self, None, None
 
-        module_name = self.getImportName()
+        module_name = self.subnode_import_name
 
         if module_name.isCompileTimeConstant():
             imported_module_name = module_name.getCompileTimeConstant()
@@ -641,7 +636,6 @@ class StatementImportStar(StatementChildHavingBase):
     kind = "STATEMENT_IMPORT_STAR"
 
     named_child = "module"
-    getSourceModule = StatementChildHavingBase.childGetter("module")
 
     __slots__ = ("target_scope",)
 
@@ -660,7 +654,7 @@ class StatementImportStar(StatementChildHavingBase):
         return self.target_scope
 
     def computeStatement(self, trace_collection):
-        trace_collection.onExpression(self.getSourceModule())
+        trace_collection.onExpression(self.subnode_module)
 
         trace_collection.onLocalsDictEscaped(self.target_scope)
 
@@ -689,7 +683,6 @@ class ExpressionImportName(ExpressionChildHavingBase):
     kind = "EXPRESSION_IMPORT_NAME"
 
     named_child = "module"
-    getModule = ExpressionChildrenHavingBase.childGetter("module")
 
     __slots__ = ("import_name", "level")
 
@@ -708,16 +701,16 @@ class ExpressionImportName(ExpressionChildHavingBase):
         return self.level
 
     def getDetails(self):
-        return {"import_name": self.getImportName(), "level": self.level}
+        return {"import_name": self.import_name, "level": self.level}
 
     def computeExpression(self, trace_collection):
-        return self.getModule().computeExpressionImportName(
+        return self.subnode_module.computeExpressionImportName(
             import_node=self,
             import_name=self.import_name,
             trace_collection=trace_collection,
         )
 
     def mayRaiseException(self, exception_type):
-        return self.getModule().mayRaiseExceptionImportName(
+        return self.subnode_module.mayRaiseExceptionImportName(
             exception_type=exception_type, import_name=self.import_name
         )
